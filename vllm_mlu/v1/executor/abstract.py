@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: Copyright contributors to the vLLM-MLU project
+from vllm.v1.executor.abstract import Executor
+
+from vllm_mlu.mlu_hijack_utils import MluHijackObject
+
+
+def vllm__v1__executor__abstract__Executor__get_mm_encoder_latency(self):
+    output = self.collective_rpc("get_mm_encoder_latency")
+    return None if any(item is None for item in output) else max(output)
+
+def vllm__v1__executor__abstract__Executor__get_latency(self):
+    output = self.collective_rpc("get_latency")
+    return max(output)
+
+
+def vllm__v1__executor__abstract__Executor__get_memory_usage(self):
+    output = self.collective_rpc("get_memory_usage")
+    return output[0]
+
+
+def vllm__v1__executor__abstract__Executor__recapture_model(
+        self, prefill_enable_mlugraph: bool, batch_size: int, input_len: int):
+    self.collective_rpc("recapture_model",
+                        args=(prefill_enable_mlugraph, batch_size, input_len))
+
+
+MluHijackObject.apply_hijack(
+    Executor,
+    "get_latency",
+    vllm__v1__executor__abstract__Executor__get_latency
+)
+MluHijackObject.apply_hijack(
+    Executor,
+    "get_mm_encoder_latency",
+    vllm__v1__executor__abstract__Executor__get_mm_encoder_latency
+)
+MluHijackObject.apply_hijack(
+    Executor,
+    "get_memory_usage",
+    vllm__v1__executor__abstract__Executor__get_memory_usage
+)
+MluHijackObject.apply_hijack(
+    Executor,
+    "recapture_model",
+    vllm__v1__executor__abstract__Executor__recapture_model
+)

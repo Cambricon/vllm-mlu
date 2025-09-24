@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: Copyright contributors to the vLLM-MLU project
+from torch import nn
+
+from vllm.config import ModelConfig
+from vllm.model_executor.model_loader.tensorizer import is_vllm_tensorized
+from vllm.model_executor.model_loader.tensorizer_loader import TensorizerLoader
+
+from vllm_mlu.model_executor.model_loader.tensorizer import deserialize_tensorizer_model
+from vllm_mlu.mlu_hijack_utils import MluHijackObject
+
+
+def vllm__model_executor__model_loader__tensorizer_loader__TensorizerLoader__load_weights(
+    self,
+    model: nn.Module,
+    model_config: ModelConfig
+) -> None:
+    """Load serialized model weights with tensorizer.
+
+    Expects a vLLM-tensorized model. See the
+    examples/others/tensorize_vllm_model.py example script
+    for serializing vLLM models."""
+    if is_vllm_tensorized(self.tensorizer_config):
+        tensorizer_config = self._patch_tensorizer_config(model_config)
+        deserialize_tensorizer_model(model, tensorizer_config)
+    else:
+        model.load_weights(self._get_weights_iterator())
+
+
+MluHijackObject.apply_hijack(
+    TensorizerLoader,
+    TensorizerLoader.load_weights,
+    vllm__model_executor__model_loader__tensorizer_loader__TensorizerLoader__load_weights
+)
