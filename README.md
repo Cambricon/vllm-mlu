@@ -25,17 +25,14 @@ vllm_mlu支持包括但不限于Chunk Prefill、Prefix Caching、Spec Decode、G
 ```
 # 加载镜像
 
-docker load -i cambricon\_pytorch\_container-torch2.7.1-torchmlu1.28.0-ubuntu22.04-py310.tar.gz
+docker load -i cambricon_pytorch_container-torch2.7.1-torchmlu1.28.0-ubuntu22.04-py310.tar.gz
 
 
 # 进入镜像
 
-docker run -it --net=host \\
-
-    --shm-size '64gb' --privileged -it \\
-
-    --ulimit memlock=-1 \${IMAGE\_NAME} \\
-
+docker run -it --net=host \
+    --shm-size '64gb' --privileged -it \
+    --ulimit memlock=-1 ${IMAGE_NAME} \
     /bin/bash
 
 # 使⽤推理环境 
