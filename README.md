@@ -70,7 +70,7 @@ cp nsight.py ${PIP_INSTALL_LOC}/ray/_private/runtime_env/ && \
 cp node.py ${PIP_INSTALL_LOC}/ray/_private/node.py && \
 cp worker.py ${PIP_INSTALL_LOC}/ray/_private/worker.py && \
 cp device_manager/__init__.py ${PIP_INSTALL_LOC}/ray/air/_internal/device_manager/__init__.py && \
-cp device\_manager/mlu.py ${PIP_INSTALL_LOC}/ray/air/_internal/device_manager/
+cp device_manager/mlu.py ${PIP_INSTALL_LOC}/ray/air/_internal/device_manager/
 ```
 
 ##### 3.3 运行步骤
